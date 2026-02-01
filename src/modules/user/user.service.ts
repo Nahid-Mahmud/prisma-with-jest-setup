@@ -1,5 +1,5 @@
-import type { Prisma, User } from "@prisma/client";
-import { prisma } from "../../config/prisma";
+import type { Prisma, User } from '@prisma/client';
+import { prisma } from '../../config/prisma';
 
 // Create a new user
 const createUser = async (data: Prisma.UserCreateInput): Promise<User> => {
@@ -10,7 +10,7 @@ const createUser = async (data: Prisma.UserCreateInput): Promise<User> => {
   });
 
   if (existingUser) {
-    throw new Error("Email already exists");
+    throw new Error('Email already exists');
   }
 
   const user = await prisma.user.create({
@@ -53,7 +53,10 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
 };
 
 // Update a user
-const updateUser = async (id: number, data: Prisma.UserUpdateInput): Promise<User> => {
+const updateUser = async (
+  id: number,
+  data: Prisma.UserUpdateInput
+): Promise<User> => {
   const user = await prisma.user.update({
     where: { id },
     data,

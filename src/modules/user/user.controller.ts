@@ -1,8 +1,8 @@
-import type { Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { UserService } from "./user.service";
-import type { Prisma } from "@prisma/client";
+import type { Request, Response } from 'express';
+import { catchAsync } from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { UserService } from './user.service';
+import type { Prisma } from '@prisma/client';
 
 // Create a new user
 const createUser = catchAsync(async (req: Request, res: Response) => {
@@ -10,7 +10,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: 201,
-    message: "User created successfully",
+    message: 'User created successfully',
     data: user,
   });
 });
@@ -19,14 +19,16 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const query: Prisma.UserWhereInput = {};
   if (req.query.id) query.id = Number(req.query.id);
-  if (req.query.email) query.email = { contains: req.query.email as string, mode: "insensitive" };
-  if (req.query.name) query.name = { contains: req.query.name as string, mode: "insensitive" };
+  if (req.query.email)
+    query.email = { contains: req.query.email as string, mode: 'insensitive' };
+  if (req.query.name)
+    query.name = { contains: req.query.name as string, mode: 'insensitive' };
 
   const users = await UserService.getAllUsers(query);
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "Users retrieved successfully",
+    message: 'Users retrieved successfully',
     data: users,
   });
 });
@@ -40,7 +42,7 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
       success: false,
       statusCode: 404,
-      message: "User not found",
+      message: 'User not found',
       data: null,
     });
     return;
@@ -49,7 +51,7 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "User retrieved successfully",
+    message: 'User retrieved successfully',
     data: user,
   });
 });
@@ -62,7 +64,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "User updated successfully",
+    message: 'User updated successfully',
     data: user,
   });
 });
@@ -75,7 +77,7 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: "User deleted successfully",
+    message: 'User deleted successfully',
     data: user,
   });
 });
