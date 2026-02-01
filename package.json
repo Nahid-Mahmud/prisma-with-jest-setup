@@ -1,7 +1,7 @@
 {
-  "name": "hello-prisma",
+  "name": "prisma-with-jest-setup",
   "version": "1.0.0",
-  "description": "",
+  "description": "A backend project using Prisma ORM with Jest testing framework",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --runInBand",
