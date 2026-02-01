@@ -11,3 +11,4 @@ build
 .logger
 /src/generated/prisma
 prisma/migrations
+.vercel
