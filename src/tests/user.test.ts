@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../app';
 import { prisma } from '../config/prisma';
+import { hashPassword } from '../utils/hashPassword';
 
 describe('User Routes', () => {
   beforeEach(async () => {
@@ -18,6 +19,7 @@ describe('User Routes', () => {
       const newUser = {
         email: 'test@example.com',
         name: 'Test User',
+        password: 'password123',
       };
 
       // No mock setup needed for integration tests
@@ -38,6 +40,7 @@ describe('User Routes', () => {
       const newUser = {
         email: 'duplicate@example.com',
         name: 'Duplicate User',
+        password: 'password123',
       };
 
       // Create the user for the first time
@@ -56,8 +59,16 @@ describe('User Routes', () => {
   describe('GET /api/v1/users', () => {
     it('should get all users', async () => {
       const mockUsers = [
-        { email: 'user1@example.com', name: 'User One' },
-        { email: 'user2@example.com', name: 'User Two' },
+        {
+          email: 'user1@example.com',
+          name: 'User One',
+          password: 'password123',
+        },
+        {
+          email: 'user2@example.com',
+          name: 'User Two',
+          password: 'password123',
+        },
       ];
       // Seed data directly into the database
       await prisma.user.createMany({ data: mockUsers });
@@ -75,7 +86,11 @@ describe('User Routes', () => {
 
   describe('GET /api/v1/users/:id', () => {
     it('should get a user by ID', async () => {
-      const mockUser = { email: 'getbyid@example.com', name: 'Get By ID User' };
+      const mockUser = {
+        email: 'getbyid@example.com',
+        name: 'Get By ID User',
+        password: 'password123',
+      };
       const createdUser = await prisma.user.create({ data: mockUser });
 
       const response = await request(app)
@@ -100,7 +115,11 @@ describe('User Routes', () => {
     it("should update a user's name", async () => {
       const updates = { name: 'Updated Name' };
       const user = await prisma.user.create({
-        data: { email: 'test@example.com', name: 'Old Name' },
+        data: {
+          email: 'test@example.com',
+          name: 'Old Name',
+          password: 'password123',
+        },
       });
 
       const response = await request(app)
@@ -114,13 +133,51 @@ describe('User Routes', () => {
   });
 
   describe('DELETE /api/v1/users/:id', () => {
-    it('should delete a user', async () => {
+    it('should reject deletion without a super admin token', async () => {
       const user = await prisma.user.create({
-        data: { email: 'delete@example.com', name: 'Delete User' },
+        data: {
+          email: 'delete@example.com',
+          name: 'Delete User',
+          password: 'password123',
+        },
       });
 
       const response = await request(app)
         .delete(`/api/v1/users/${user.id}`)
+        .expect(401);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should delete a user as a super admin', async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: 'delete@example.com',
+          name: 'Delete User',
+          password: 'password123',
+        },
+      });
+
+      const hashedPassword = await hashPassword('adminpass123');
+      await prisma.user.create({
+        data: {
+          email: 'admin@example.com',
+          name: 'Admin',
+          password: hashedPassword,
+          role: 'SUPER_ADMIN',
+        },
+      });
+
+      const loginResponse = await request(app).post('/api/v1/auth/login').send({
+        email: 'admin@example.com',
+        password: 'adminpass123',
+      });
+
+      const { accessToken } = loginResponse.body.data;
+
+      const response = await request(app)
+        .delete(`/api/v1/users/${user.id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
       expect(response.body.success).toBe(true);

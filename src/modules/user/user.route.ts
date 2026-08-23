@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
 import { validateRequest } from '../../middlewares/validateRequest';
+import { checkAuth } from '../../middlewares/checkAuth';
 import { createUserSchema, updateUserSchema } from './user.validation';
 
 export const userRouter: Router = Router();
@@ -25,5 +26,5 @@ userRouter.patch(
   UserController.updateUser
 );
 
-// Delete a user
-userRouter.delete('/:id', UserController.deleteUser);
+// Delete a user (Super Admin only)
+userRouter.delete('/:id', checkAuth('SUPER_ADMIN'), UserController.deleteUser);

@@ -8,6 +8,9 @@ interface EnvVariables {
   NODE_ENV: 'development' | 'production' | 'test';
   FRONTEND_URL: string;
   TEST_DB_URI?: string;
+  BCRYPT_SALT_ROUNDS: string;
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
 }
 
 const loadEnvVariable = (): EnvVariables => {
@@ -16,6 +19,9 @@ const loadEnvVariable = (): EnvVariables => {
     'DATABASE_URL',
     'NODE_ENV',
     'FRONTEND_URL',
+    'BCRYPT_SALT_ROUNDS',
+    'JWT_SECRET',
+    'JWT_EXPIRES_IN',
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -38,6 +44,9 @@ const loadEnvVariable = (): EnvVariables => {
     DATABASE_URL: databaseUrl,
     NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test',
     FRONTEND_URL: process.env.FRONTEND_URL as string,
+    BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS as string,
+    JWT_SECRET: process.env.JWT_SECRET as string,
+    JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN as string,
   };
 };
 

@@ -8,7 +8,7 @@ import {
   PrismaClientInitializationError,
   PrismaClientRustPanicError,
 } from '@prisma/client/runtime/client';
-import { AppError } from '../utils/AppError';
+import { AppError } from '../errors/AppError';
 
 interface PrismaErrorDetails {
   type: string;
@@ -469,7 +469,10 @@ const globalErrorHandler = (
   res.status(statusCode).json({
     success: false,
     message,
-    ...(process.env.NODE_ENV === 'development' && { error: errorDetails }),
+    ...(process.env.NODE_ENV === 'development' && {
+      error: errorDetails,
+      stack: err instanceof Error ? err.stack : undefined,
+    }),
   });
 };
 
