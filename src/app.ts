@@ -1,13 +1,15 @@
 import cors from 'cors';
 import express, { type Application } from 'express';
+import helmet from 'helmet';
 import notFound from './middlewares/notFound';
+import globalErrorHandler from './middlewares/globalErrorHandler';
 import { router } from './routes';
 import envVariables from './config/env';
 
 export const app: Application = express();
 
 // Middleware
-app.use(cors()); // Enables Cross-Origin Resource Sharing
+app.use(helmet()); // Set security-related HTTP headers
 app.use(express.json()); // Parse incoming JSON requests
 
 app.use(
@@ -25,3 +27,4 @@ app.get('/', (_req, res) => {
 });
 
 app.use(notFound);
+app.use(globalErrorHandler);

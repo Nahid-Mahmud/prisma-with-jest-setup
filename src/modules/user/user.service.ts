@@ -1,5 +1,7 @@
 import type { Prisma, User } from '@prisma/client';
+import StatusCodes from 'http-status-codes';
 import { prisma } from '../../config/prisma';
+import { AppError } from '../../utils/AppError';
 
 // Create a new user
 const createUser = async (data: Prisma.UserCreateInput): Promise<User> => {
@@ -10,7 +12,7 @@ const createUser = async (data: Prisma.UserCreateInput): Promise<User> => {
   });
 
   if (existingUser) {
-    throw new Error('Email already exists');
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Email already exists');
   }
 
   const user = await prisma.user.create({
