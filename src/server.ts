@@ -10,6 +10,7 @@ let server: Server | null = null;
 async function checkDatabaseConnection() {
   try {
     await prisma.$connect();
+    await prisma.$queryRaw`SELECT 1`;
     console.log('✅ Database connection established.');
   } catch (error) {
     console.error('❌ Database connection failed:', error);
